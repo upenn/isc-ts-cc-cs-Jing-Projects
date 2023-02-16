@@ -2,7 +2,7 @@
 Import-Module ExchangeOnlineManagement
  
 # Connect to Azure AD
-# Connect-AzureAD
+#Connect-AzureAD
 # Connect to exhange online
 Connect-ExchangeOnline
  
@@ -22,6 +22,7 @@ $Mailboxes = Get-Mailbox -ResultSize unlimited | Where-Object {[System.DateTime]
 
 #Get-Mailbox -ResultSize unlimited -RecipientTypeDetails $mailboxTypes -Properties GrantSendOnBehalfTo, ForwardingSMTPAddress| select UserPrincipalName, DisplayName, PrimarySMTPAddress, RecipientType, RecipientTypeDetails, GrantSendOnBehalfTo, ForwardingSMTPAddress
 
+#Get-Mailbox -ResultSize unlimited
 #$Users = Get-Mailbox  | Where-Object {[System.DateTime]$_.WhenMailboxCreated -gt (get-date).AddDays(-7)}
 #$UserData = @()
 $MailboxData = @()
@@ -41,7 +42,7 @@ $Mailboxes | ForEach-Object {
             ManagingCenterName    = $_.CustomAttribute5
             PCOMCenter            = $_.CustomAttribute7
             BudgetCode            = $_.CustomAttribute14
-            PrimarySMTP           = $_.PrimarySmtp
+            PrimarySMTP           = $_.PrimarySmtpAddress
             AccountType           = $_.RecipientTypeDetails
             Alias                 = $_.Alias
             EmailAddresses        = $_.EmailAddresses
@@ -50,16 +51,15 @@ $Mailboxes | ForEach-Object {
             WhenMailboxCreated    = $_.WhenMailboxCreated
             ArchiveStatus         = $_.ArchiveStatus
           #  License               = ($_.Licenses).AccountSkuId    
-          #  CreatedDateTime        = $_.ExtensionProperty.createdDateTime
-            CreatedDateTime       = $_.ExtensionProperty.createdDateTime
+
     })
 }
  #Get-Mailbox -Identity 'jhu18@upenn.edu' | Select-Object EmployID, Name,Displayname,userPrincipalName, CustomAttribute7, CustomAttribute5,CustomAttribute14,PrimarySMTP,RecipientTypeDetails, Alias, EmailAddresses, ForwardingSmtpAddress, MailboxEnabled,WhenMailboxCreated, ArchiveStatus,AssignedPlans
 
 #Export to CSV
 
-$MailboxData | Export-Csv "C:\Temp\Office365UsersCreationHistory.csv" -NoTypeInformation
-
+#$MailboxData | Export-Csv "C:\Temp\Office365UsersCreationHistory2.csv" -NoTypeInformation
+$MailboxData | Export-Csv "C:\Temp\Office365UsersCreationHistory_$((Get-Date -format yyyy-MMM-dd-ddd` hh-mm` tt).ToString()).csv" -NoTypeInformation
 
 Write-Host $now "Office365 Users Report Generated in C:\Temp\"
 
