@@ -9,7 +9,6 @@ $CurrentDate = Get-Date
 $LastWeek = $CurrentDate.AddDays(-7)
 
 # Get a list of all users created in the past month
-#$Users = Get-Mailbox -ResultSize unlimited | Where-Object {[System.DateTime]$_.WhenMailboxCreated -gt $LastWeek}
 $Mailboxes = Get-Mailbox -ResultSize unlimited | Where-Object {[System.DateTime]$_.WhenMailboxCreated -gt $LastWeek}
 
 $MailboxData = @()
@@ -44,7 +43,6 @@ $Mailboxes | ForEach-Object {
  
 #Export to CSV
 
-#$MailboxData | Export-Csv "C:\Temp\Office365UsersCreationHistory2.csv" -NoTypeInformation
 $MailboxData | Export-Csv "C:\Temp\Office365UsersCreationHistory_$((Get-Date -format yyyy-MMM-dd-ddd` hh-mm` tt).ToString()).csv" -NoTypeInformation
 
 Write-Host $now "Office365 Users Report Generated in C:\Temp\"
