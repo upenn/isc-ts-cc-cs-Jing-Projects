@@ -1,55 +1,67 @@
 # Import the Azure AD module
-Import-Module AzureAD
+Import-Module ExchangeOnlineManagement
  
 # Connect to Azure AD
-Connect-AzureAD
+# Connect-AzureAD
+# Connect to exhange online
+Connect-ExchangeOnline
  
 # Calculate the date and time one month ago
 # $OneMonthAgo = (Get-Date).AddMonths(-1)
 # $OneWeekAgo = (Get-Date).AddWeeks(-1)
  
-$CurrentDate = Get-Date
+$CurrentDate = Get-Date 
 $LastWeek = $CurrentDate.AddDays(-7)
-$Lastmonth = $CurrentDate.AddDays(-30)
+#$LastWeek = (Get-Date).AddDays(-1)
+#$Last3Days = $CurrentDate.AddDays(-3)
+#$Lastmonth = $CurrentDate.AddDays(-30)
 
 # Get a list of all users created in the past month
-$Users = Get-AzureADUser -All:$true | Where-Object {[System.DateTime]$_.ExtensionProperty.createdDateTime -gt $LastWeek}
- 
-$UserData = @()
+#$Users = Get-Mailbox -ResultSize unlimited | Where-Object {[System.DateTime]$_.WhenMailboxCreated -gt $LastWeek}
+$Mailboxes = Get-Mailbox -ResultSize unlimited | Where-Object {[System.DateTime]$_.WhenMailboxCreated -gt $LastWeek}
+
+#Get-Mailbox -ResultSize unlimited -RecipientTypeDetails $mailboxTypes -Properties GrantSendOnBehalfTo, ForwardingSMTPAddress| select UserPrincipalName, DisplayName, PrimarySMTPAddress, RecipientType, RecipientTypeDetails, GrantSendOnBehalfTo, ForwardingSMTPAddress
+
+#$Users = Get-Mailbox  | Where-Object {[System.DateTime]$_.WhenMailboxCreated -gt (get-date).AddDays(-7)}
+#$UserData = @()
+$MailboxData = @()
+
 # Iterate through each user
-$Users | ForEach-Object {
+$Mailboxes | ForEach-Object {
   #  Write-Host "Getting created date for" $_.UserPrincipalName
  
     #Collect the user data
-    $UserData += New-Object PSObject -property $([ordered]@{
+    $MailboxData += New-Object PSObject -property $([ordered]@{
 
             PennID                = $_.ImmutableId
-          # Name                  = $_.name
+            Name                  = $_.Name
             DisplayName           = $_.DisplayName
             UserPrincipalName     = $_.UserPrincipalName
-          #  ManagingCenter       = $thisMC
-          #  ManagingCenterName   = $thisMCName
-          #  PCOMCenter           = $PCOMCenter
-          #  BudgetCode            = $_.CustomAttribute14
-          #  PrimarySMTP           = $_.PrimarySmtpAddress
-          #  AccountType           = $_.RecipientTypeDetails
-          #  Alias                 = $_.Alias
-          #  EmailAddresses        = $_.emailaddresses -join ';'
-          #  ForwardingSmtpAddress = $_.ForwardingSmtpAddress
-          #  MailboxEnabled        = $_.IsMailboxEnabled
-          #  WhenMailboxCreated    = $_.WhenMailboxCreated
-          #  ArchiveStatus         = $_.ArchiveStatus
-          #  License              = ($_.Licenses).AccountSkuId    
-           CreatedDateTime       = $_.ExtensionProperty.createdDateTime
-        
+            ManagingCenter        = $_.CustomAttribute7
+            ManagingCenterName    = $_.CustomAttribute5
+            PCOMCenter            = $_.CustomAttribute7
+            BudgetCode            = $_.CustomAttribute14
+            PrimarySMTP           = $_.PrimarySmtp
+            AccountType           = $_.RecipientTypeDetails
+            Alias                 = $_.Alias
+            EmailAddresses        = $_.EmailAddresses
+            ForwardingSmtpAddress = $_.ForwardingSmtpAddress
+            MailboxEnabled        = $_.isMailboxEnabled
+            WhenMailboxCreated    = $_.WhenMailboxCreated
+            ArchiveStatus         = $_.ArchiveStatus
+          #  License               = ($_.Licenses).AccountSkuId    
+          #  CreatedDateTime        = $_.ExtensionProperty.createdDateTime
+            CreatedDateTime       = $_.ExtensionProperty.createdDateTime
     })
 }
- 
+ #Get-Mailbox -Identity 'jhu18@upenn.edu' | Select-Object EmployID, Name,Displayname,userPrincipalName, CustomAttribute7, CustomAttribute5,CustomAttribute14,PrimarySMTP,RecipientTypeDetails, Alias, EmailAddresses, ForwardingSmtpAddress, MailboxEnabled,WhenMailboxCreated, ArchiveStatus,AssignedPlans
+
 #Export to CSV
 
-$UserData | Export-Csv "C:\scr\Jhu-test\Office365UsersCreationHistory.csv" -NoTypeInformation
+$MailboxData | Export-Csv "C:\Temp\Office365UsersCreationHistory.csv" -NoTypeInformation
 
 
+Write-Host $now "Office365 Users Report Generated in C:\Temp\"
 
 ###########################
  #          "PennID"                = $PennID
