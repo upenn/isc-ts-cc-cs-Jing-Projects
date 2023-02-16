@@ -1,30 +1,17 @@
 # Import the Azure AD module
 Import-Module ExchangeOnlineManagement
  
-# Connect to Azure AD
-#Connect-AzureAD
 # Connect to exhange online
 Connect-ExchangeOnline
  
-# Calculate the date and time one month ago
-# $OneMonthAgo = (Get-Date).AddMonths(-1)
-# $OneWeekAgo = (Get-Date).AddWeeks(-1)
- 
+# Calculate the date and time 
 $CurrentDate = Get-Date 
 $LastWeek = $CurrentDate.AddDays(-7)
-#$LastWeek = (Get-Date).AddDays(-1)
-#$Last3Days = $CurrentDate.AddDays(-3)
-#$Lastmonth = $CurrentDate.AddDays(-30)
 
 # Get a list of all users created in the past month
 #$Users = Get-Mailbox -ResultSize unlimited | Where-Object {[System.DateTime]$_.WhenMailboxCreated -gt $LastWeek}
 $Mailboxes = Get-Mailbox -ResultSize unlimited | Where-Object {[System.DateTime]$_.WhenMailboxCreated -gt $LastWeek}
 
-#Get-Mailbox -ResultSize unlimited -RecipientTypeDetails $mailboxTypes -Properties GrantSendOnBehalfTo, ForwardingSMTPAddress| select UserPrincipalName, DisplayName, PrimarySMTPAddress, RecipientType, RecipientTypeDetails, GrantSendOnBehalfTo, ForwardingSMTPAddress
-
-#Get-Mailbox -ResultSize unlimited
-#$Users = Get-Mailbox  | Where-Object {[System.DateTime]$_.WhenMailboxCreated -gt (get-date).AddDays(-7)}
-#$UserData = @()
 $MailboxData = @()
 
 # Iterate through each user
@@ -54,8 +41,7 @@ $Mailboxes | ForEach-Object {
 
     })
 }
- #Get-Mailbox -Identity 'jhu18@upenn.edu' | Select-Object EmployID, Name,Displayname,userPrincipalName, CustomAttribute7, CustomAttribute5,CustomAttribute14,PrimarySMTP,RecipientTypeDetails, Alias, EmailAddresses, ForwardingSmtpAddress, MailboxEnabled,WhenMailboxCreated, ArchiveStatus,AssignedPlans
-
+ 
 #Export to CSV
 
 #$MailboxData | Export-Csv "C:\Temp\Office365UsersCreationHistory2.csv" -NoTypeInformation
