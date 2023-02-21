@@ -39,4 +39,4 @@ $Mailboxes | ForEach-Object {
 }
 
 #Export to CSV
-$MailboxData |Sort WhenMailboxCreated -Descending | Export-Csv "C:\scr\Jhu-test\WeeklyO365BillingReport_$((Get-Date -format yyyy-MMM-dd-ddd` hh-mm` tt).ToString()).csv" -NoTypeInformation
+$MailboxData |Sort-Object WhenMailboxCreated -Descending | Export-Csv "C:\scr\Jhu-test\WeeklyO365BillingReport_$((Get-Date -format yyyy-MMM-dd-ddd` hh-mm` tt).ToString()).csv" -NoTypeInformation
