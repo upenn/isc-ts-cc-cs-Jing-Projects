@@ -1,13 +1,9 @@
-﻿#Import the Azure AD module
-
-Import-Module ExchangeOnlineManagement
+﻿Import-Module ExchangeOnlineManagement
 Import-Module AzureAD # -UseWindowsPowerShell (need to be added on VB Code)
 
 Connect-ExchangeOnline
 Connect-AzureAD
 Connect-Graph -Scopes User.Read.All
-
-# Get a list of all users created in the past month
 
 # Get all mailboxes in the tenant
 $Mailboxes = Get-EXOMailbox -ResultSize unlimited -Properties  CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated, isMailboxEnabled, ArchiveStatus,ImmutableId
