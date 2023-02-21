@@ -1,3 +1,4 @@
+# Import Modules
 Import-Module ExchangeOnlineManagement
 #(Import-Module AzureAD) is enough if it's not on Jing's VB Code.
 Import-Module AzureAD -UseWindowsPowerShell
@@ -12,7 +13,6 @@ $LastWeek = $CurrentDate.AddDays(-7)
 # $OneMonthAgo = (Get-Date).AddMonths(-1)
 
 # Get a list of all mailboxes created in the past week
-#$Mailboxes = Get-Mailbox -ResultSize unlimited | Where-Object {[System.DateTime]$_.WhenMailboxCreated -gt $LastWeek}
 $Mailboxes = Get-EXOMailbox -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated, isMailboxEnabled, ArchiveStatus,ImmutableId `
  | Where-Object {[System.DateTime]$_.WhenMailboxCreated -gt $LastWeek}
 
