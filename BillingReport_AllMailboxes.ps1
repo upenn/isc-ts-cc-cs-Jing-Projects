@@ -3,6 +3,7 @@ Import-Module AzureAD # -UseWindowsPowerShell (need to be added on VB Code)
 
 Connect-ExchangeOnline
 Connect-AzureAD
+Select-MgProfile -Name "beta"
 Connect-Graph -Scopes User.Read.All
 
 # Get all mailboxes in the tenant
@@ -17,7 +18,8 @@ $Mailboxes | ForEach-Object {
     $MailboxData += New-Object PSObject -property $([ordered]@{
 
          
-            PennID                = (Get-AzureADUser -ObjectId $_.UserPrincipalName).ImmutableId
+            #PennID                = (Get-AzureADUser -ObjectId $_.UserPrincipalName).ImmutableId
+            PennID                = (Get-MgUser -UserId $_.UserPrincipalName).EmployeeId
             Name                  = $_.Name
             DisplayName           = $_.DisplayName
             UserPrincipalName     = $_.UserPrincipalName
@@ -39,4 +41,4 @@ $Mailboxes | ForEach-Object {
 }
 
 #Export to CSV
-$MailboxData |Sort-Object WhenMailboxCreated -Descending | Export-Csv "C:\scr\Jhu-test\WeeklyO365BillingReport_$((Get-Date -format yyyy-MMM-dd-ddd` hh-mm` tt).ToString()).csv" -NoTypeInformation
+$MailboxData |Sort-Object WhenMailboxCreated -Descending | Export-Csv "C:\Temp\WeeklyO365BillingReport_$((Get-Date -format yyyy-MMM-dd-ddd` hh-mm` tt).ToString()).csv" -NoTypeInformation
