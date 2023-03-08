@@ -14,7 +14,7 @@ Get-CS-MailboxAIO (alias: Get-MailboxAIO) with paramter:
 
 # $script:CSCenters
 $CSCenters = [ordered]@{
-	AC 		= @{ 'Name' = 'Annenberg Center for Performing Arts'; 'Code' = '19'; 'Short' = 'AC'; 'Email' = "o365-ac-lsps@isc.upenn.edu"}
+	AC 	= @{ 'Name' = 'Annenberg Center for Performing Arts'; 'Code' = '19'; 'Short' = 'AC'; 'Email' = "o365-ac-lsps@isc.upenn.edu"}
 	ASC 	= @{ 'Name' = 'Annenberg School for Communications'; 'Code' = '36'; 'Short' = 'ASC'; 'Email' = "o365-asc-lsps@isc.upenn.edu"}
 	BSD 	= @{ 'Name' = 'Business Services'; 'Code' = '93'; 'Short' = 'BSD'; 'Email' = "o365-bsd-lsps@isc.upenn.edu"}
 	BUS 	= @{ 'Name' = 'Morris Arboretum'; 'Code' = '60'; 'Short' = 'BUS'; 'Email' = "o365-bus-lsps@isc.upenn.edu"}
@@ -26,7 +26,7 @@ $CSCenters = [ordered]@{
 	EVP 	= @{ 'Name' = 'Executive Vice President'; 'Code' = '98'; 'Short' = 'EVP'; 'Email' = "o365-evp-lsps@isc.upenn.edu"}
 	FRES 	= @{ 'Name' = 'Facilities and Real Estate Services'; 'Code' = '96'; 'Short' = 'FRES'; 'Email' = "o365-fres-lsps@isc.upenn.edu"}
 	GSE 	= @{ 'Name' = 'Graduate School of Education'; 'Code' = '32'; 'Short' = 'GSE'; 'Email' = "o365-gse-lsps@isc.upenn.edu"}
-	HR 		= @{ 'Name' = 'Human Resources'; 'Code' = '92'; 'Short' = 'HR'; 'Email' = "o365-hr-lsps@isc.upenn.edu"}
+	HR 	= @{ 'Name' = 'Human Resources'; 'Code' = '92'; 'Short' = 'HR'; 'Email' = "o365-hr-lsps@isc.upenn.edu"}
 	ISC 	= @{ 'Name' = 'Information Systems and Computing'; 'Code' = '91'; 'Short' = 'ISC'; 'Email' = "o365-isc-lsps@isc.upenn.edu"}
 	ICA 	= @{ 'Name' = 'Institute of Contemporary Art'; 'Code' = '61'; 'Short' = 'ICA'; 'Email' = "o365-ica-lsps@isc.upenn.edu"}
 	LAW 	= @{ 'Name' = 'Law School'; 'Code' = '56'; 'Short' = 'LAW'; 'Email' = "o365-law-lsps@isc.upenn.edu"}
