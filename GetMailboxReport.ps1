@@ -179,7 +179,7 @@ function Get-CS-MailboxAIO{
             
         }
         elseif($Startdate -lt $EndDate){  
-            ## $startdate/$enddate
+
             $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
                 -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
                 Where-Object {$_.WhenMailboxCreated -ge $Startdate -and $_.whenmailboxcreated -le $Enddate} 
@@ -188,191 +188,23 @@ function Get-CS-MailboxAIO{
             $ReportPath = $ReportPath + "_From$(($StartDate.ToString("yyyyMMdd")))to$(($EndDate.ToString("yyyyMMdd")))_"
             $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
         }else{ #no parameter, return all mailboxes
-            #####################################testing only
-                           Write-Output "Here is CenterShortName2-$Center, code-$CenterCode, CenterName-$CenterName" # testing only
+
+            Write-Output "Here is CenterShortName2-$Center, code-$CenterCode, CenterName-$CenterName" # testing only
                
-                           $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
-                               -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated, isMailboxEnabled, ArchiveStatus,ForwardingSmtpAddress
-                               
-                           $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
-
-                           $ReportPath = "All_"+$ReportPath
-                           $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-                           Write-Output "Please find $Center _Mailboxes report in $($ReportPath+$DateStamp).csv"
-        }          
-}
-
-<#
-.Synopsis
-   Get new mailboxes report created in last # of days or in certain peroid with -StartDate and -EndDate
-.DESCRIPTION
-   Get new mailboxes report created in last # of days or in certain peroid 
-   parameter will be -LastNumberOfDays, -StartDate and -EndDate
-   -StartDate and -EndDate it's from midnight to midnight
-.EXAMPLE
-   Get-CS-NewMailbox 7 (get last 7 days new mailboxes report)   
-.EXAMPLE
-   Get-CS-NewMailbox -StartDate 1/1/2023 -EndDate 3/1/2023 (get new mailboxes created between two dates)
-#>
-function Get-CS-NewMailbox
-{
-    [CmdletBinding()]
-    [Alias('Get-NewMailbox')]
-    Param
-    ( 
-        [int] $LastNumberOfDays,
-        [datetime]$StartDate,
-        [datetime]$EndDate
-    )
-        Connect-ExchangeOnline -ShowBanner:$false
-        Connect-MgGraph -ErrorAction:SilentlyContinue
-        Select-MgProfile -Name "beta"
-
-        $DateStamp = (Get-Date -f MMdd_HHmmss).tostring()
-        
-        $ReportPath = "C:\Temp\NewMailboxReport"
-
-        if($LastNumberOfDays -ge 1){
-            $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
-                -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
-                Where-Object {$_.WhenMailboxCreated -ge (Get-Date).AddDays(-$LastNumberOfDays)}
-
-            $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
-
-            $ReportPath = $ReportPath + "_Last"+$LastNumberOfDays + "Days_"
-            $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-        }
-        elseif(-not $StartDate){
-            Write-Host "-LastNumberOfDays or - StartDate -EndDate missing." 
-            break
-        }
-        elseif(-not $EndDate){
-            Write-Host "-EndDate missing." 
-            break
-        }
-        elseif($Startdate -gt $EndDate){
-            Write-Host "The Startdate is after the EndDate." 
-            break
-        }
-        else{
-            $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
-            -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
-            Where-Object {$_.WhenMailboxCreated -ge $Startdate -and $_.whenmailboxcreated -le $Enddate} 
-
-            $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
-            $ReportPath = $ReportPath + "_From$(($StartDate.ToString("yyyyMMdd")))to$(($EndDate.ToString("yyyyMMdd")))_"
-            $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-        }          
-        
-    $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
-    $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-    Write-Output "Please find New Mailboxes report from $Startdate to $EndDate in $($ReportPath+$DateStamp).csv"
-}
-
-<#
-.Synopsis
-   Get all mailboxes report in the organization. 
-.DESCRIPTION
-    This cmdlet returns a report of all mailboxes report in the organization. 
-.EXAMPLE
-   Get-CS-AllMailbox
-.EXAMPLE
-   Get-AllMailbox
-   #>
-function Get-CS-AllMailbox{
-    [CmdletBinding()]
-    [Alias('Get-AllMailbox')]
-    Param()
-     
-        Connect-ExchangeOnline -ShowBanner:$false
-        Connect-MgGraph -ErrorAction:SilentlyContinue
-        Select-MgProfile -Name "beta"
-
-        $DateStamp = (Get-Date -f MMdd_HHmmss).tostring()
-        $ReportPath = "C:\Temp\AllMailboxReport"
-
-        $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
-        -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated, `
-                    isMailboxEnabled, ArchiveStatus,ImmutableId,ForwardingSmtpAddress
-        $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
-  
-        $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-        Write-Output "Please find All Mailboxes report in $($ReportPath+$DateStamp).csv"
-}
-
-<#
-.Synopsis
-   get mailbox report by center short name or All or None as parameter
-   "short name" returns all mailbox with ID/center name even one of them is missing.
-    "All" means all mailboxes.
-    "none" means no (PCOM ID and center name)
-.DESCRIPTION
-    this cmdlet return a report of all mailboxes in the center/all organization or without center
-.EXAMPLE
-    Get-CS-AllMailboxByCenter ALL
-.EXAMPLE
-    Get-CS-AllMailboxByCenter ISC
-.EXAMPLE
-    Get-CS-AllMailboxByCenter none
-   #>
-function Get-CS-AllMailboxByCenter{
-    [CmdletBinding()]
-    [Alias('Get-AllMailboxByCenter')]
-    Param(
-        [string]$Center = "ALL"
-    )
-        Connect-ExchangeOnline -ShowBanner:$false
-        Connect-MgGraph -ErrorAction:SilentlyContinue
-        Select-MgProfile -Name "beta"
-
-        $CenterCode = $CSCenters[$center].Code
-        $CenterName = $CSCenters[$center].Name
-
-        $DateStamp = (Get-Date -f MMdd_HHmmss).tostring()
-        $ReportPath = "C:\Temp\$($Center)_MailboxReport"
-
-        if ($Center -eq "all"){
-            
-            Write-Output "Here is CenterShortName-$Center, code-$CenterCode, CenterName-$CenterName" # testing only
-
             $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
                 -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated, isMailboxEnabled, ArchiveStatus,ForwardingSmtpAddress
-            
+                               
             $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
 
+            $ReportPath = "All_"+$ReportPath
             $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
             Write-Output "Please find $Center _Mailboxes report in $($ReportPath+$DateStamp).csv"
-            }
-        elseif ($Center -in $Script:CSCenters.Keys){
-            
-            Write-Output "Here is CenterShortName-$Center, code-$CenterCode, CenterName-$CenterName" # testing only
-            
-            $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
-                -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
-                Where-Object {(($_.CustomAttribute7 -split ';')[0] -eq $CenterCode) -or ($_.CustomAttribute5 -eq $CenterName)} 
-
-            $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
-
-            $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-            Write-Output "Please find $Center _Mailboxes report in $($ReportPath+$DateStamp).csv"
-        }
-        elseif ($Center -eq "none"){
-
-            Write-Output "Here is CenterShortName-$Center" # testing only
-            
-            $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
-                -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
-                Where-Object {($_.Customattribute7 -eq "") -and ($_.CustomAttribute5 -eq "")}
-            
-            $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
-                                  
-            $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-            Write-Output "Please find $center _Mailboxes report in $($ReportPath+$DateStamp).csv"
-        }
+        }          
 }
-    <#
+
+<#
     internal function, hash table to create report.
-    #>
+#>
 function Get-CS-AllMailboxHash{
     [CmdletBinding()]
     [Alias('Get-AllMailboxReport')]
