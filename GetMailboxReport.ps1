@@ -51,27 +51,6 @@ $CSCenters = [ordered]@{
 	XPN 	= @{ 'Name' = 'XPN'; 'Code' = '81'; 'Short' = 'XPN'; 'Email' = "o365-xpn-lsps@isc.upenn.edu"}
 }
 
-function Get-CSCenter{
-    # testing CSCenter only
-    [cmdletbinding()]
-    Param(
-        [Parameter(Mandatory=$true)]
-        [string]$Center = "ALL"
-    )
-
-    $Code = $CSCenters[$center].Code
-    $CenterName = $CSCenters[$center].Name
-    $CenterEmail = $CSCenters[$center].Email
-
-    if ($Center -eq "ALL"){
-        foreach ($CenterCode in $Script:CSCenters.Keys){
-            Write-Output "Here is Centercode-$CenterCode, code-$($CSCenters[$CenterCode].Code), CenterName-$($CSCenters[$CenterCode].Name)"  
-        }
-    }elseif($Center -in $Script:CSCenters.keys){
-            Write-Output "Here is CenterShortName-$Center, code-$Code, CenterName-$CenterName, CenterEmail-$CenterEmail"
-        }
-    }
-
 <#
     .Synopsis
        This cmdlet is all in one version for mailbox report. 
@@ -95,7 +74,7 @@ function Get-CSCenter{
     .OUTPUTS
        CSV file in C:\Temp folder
 #>
-    function Get-CS-MailboxAIO{
+function Get-CS-MailboxAIO{
     [CmdletBinding()]
     [Alias('Get-MailboxAIO')]
     Param(
@@ -234,7 +213,7 @@ function Get-CSCenter{
    Get-CS-NewMailbox 7 (get last 7 days new mailboxes report)   
 .EXAMPLE
    Get-CS-NewMailbox -StartDate 1/1/2023 -EndDate 3/1/2023 (get new mailboxes created between two dates)
-   #>
+#>
 function Get-CS-NewMailbox
 {
     [CmdletBinding()]
