@@ -5,11 +5,6 @@ Get-CS-MailboxAIO (alias: Get-MailboxAIO) with paramter:
  * report by all centers: -center all
  * report without any center inforamtion: -center none.
  * this cmdlet needs $CSCcenters, Get-CS-MailboxHash
- * 
- following cmdlets can work individully, see details in each cmdlet.
- Get-CS-NewMailbox
- Get-CS-AllMailbox
- Get-CS-allmailBoxBycenter
 #>
 
 # $script:CSCenters
@@ -64,6 +59,7 @@ foreach ($row in $data) {
     $CSCenters.Add($row.Short, $hash)
 }
 #>
+
 <#
     .Synopsis
        This cmdlet is all in one version for mailbox report. 
@@ -206,9 +202,7 @@ function Get-CS-MailboxAIO{
         }          
 }
 
-<#
-    internal function, hash table to create report.
-#>
+#    internal function, hash table to create report.
 function Get-CS-AllMailboxHash{
     [CmdletBinding()]
     [Alias('Get-AllMailboxReport')]
@@ -218,8 +212,7 @@ function Get-CS-AllMailboxHash{
         $Mailboxes
     )
         $total = $Mailboxes.count
-        
-       # $Total = ($Mailboxes | Measure-Object).Count
+        # $Total = ($Mailboxes | Measure-Object).Count
         $i = 0
         $MailboxData = @()
         $Mailboxes | ForEach-Object {
