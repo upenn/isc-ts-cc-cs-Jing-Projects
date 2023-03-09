@@ -1,71 +1,29 @@
 ﻿<#
 Get-CS-MailboxAIO (alias: Get-MailboxAIO) with paramter: 
  * report by date: -LastNumberOfDays, -StartDate/-EndDate
- * report by center short number: -center ISC
+ * report by center ARS_MU number: -center ISC
  * report by all centers: -center all
  * report without any center inforamtion: -center none.
  * this cmdlet needs $CSCcenters, Get-CS-MailboxHash
 #>
 
-# $script:CSCenters
-$CSCenters = [ordered]@{
-	AC 	= @{ 'Name' = 'Annenberg Center for Performing Arts'; 'Code' = '19'; 'Short' = 'AC'; 'Email' = "o365-ac-lsps@isc.upenn.edu"}
-	ASC 	= @{ 'Name' = 'Annenberg School for Communications'; 'Code' = '36'; 'Short' = 'ASC'; 'Email' = "o365-asc-lsps@isc.upenn.edu"}
-	BSD 	= @{ 'Name' = 'Business Services'; 'Code' = '93'; 'Short' = 'BSD'; 'Email' = "o365-bsd-lsps@isc.upenn.edu"}
-	BUS 	= @{ 'Name' = 'Morris Arboretum'; 'Code' = '60'; 'Short' = 'BUS'; 'Email' = "o365-bus-lsps@isc.upenn.edu"}
-	CHAS 	= @{ 'Name' = 'College Houses and Academic Services'; 'Code' = '86'; 'Short' = 'CHAS'; 'Email' = "o365-chas-lsps@isc.upenn.edu"}
-	DAR 	= @{ 'Name' = 'Development and Alumni Relations'; 'Code' = '90'; 'Short' = 'DAR'; 'Email' = "o365-dar-lsps@isc.upenn.edu"}
-	DES 	= @{ 'Name' = 'Weitzman School of Design'; 'Code' = '33'; 'Short' = 'DES'; 'Email' = "o365-des-lsps@isc.upenn.edu"}
-	DOF 	= @{ 'Name' = 'Division of Finance'; 'Code' = '87'; 'Short' = 'DOF'; 'Email' = "o365-dof-lsps@isc.upenn.edu"}
-	DRIA 	= @{ 'Name' = 'Division of Recreation & Intercollegiate Athletics'; 'Code' = '24'; 'Short' = 'DRIA'; 'Email' = "o365-dria-lsps@isc.upenn.edu"}
-	EVP 	= @{ 'Name' = 'Executive Vice President'; 'Code' = '98'; 'Short' = 'EVP'; 'Email' = "o365-evp-lsps@isc.upenn.edu"}
-	FRES 	= @{ 'Name' = 'Facilities and Real Estate Services'; 'Code' = '96'; 'Short' = 'FRES'; 'Email' = "o365-fres-lsps@isc.upenn.edu"}
-	GSE 	= @{ 'Name' = 'Graduate School of Education'; 'Code' = '32'; 'Short' = 'GSE'; 'Email' = "o365-gse-lsps@isc.upenn.edu"}
-	HR 	= @{ 'Name' = 'Human Resources'; 'Code' = '92'; 'Short' = 'HR'; 'Email' = "o365-hr-lsps@isc.upenn.edu"}
-	ISC 	= @{ 'Name' = 'Information Systems and Computing'; 'Code' = '91'; 'Short' = 'ISC'; 'Email' = "o365-isc-lsps@isc.upenn.edu"}
-	ICA 	= @{ 'Name' = 'Institute of Contemporary Art'; 'Code' = '61'; 'Short' = 'ICA'; 'Email' = "o365-ica-lsps@isc.upenn.edu"}
-	LAW 	= @{ 'Name' = 'Law School'; 'Code' = '56'; 'Short' = 'LAW'; 'Email' = "o365-law-lsps@isc.upenn.edu"}
-	LDC 	= @{ 'Name' = 'Linguistic Data Consortium'; 'Code' = '02'; 'Short' = 'LDC'; 'Email' = "o365-ldc-lsps@isc.upenn.edu"}
-	LIB 	= @{ 'Name' = 'University Library'; 'Code' = '50'; 'Short' = 'LIB'; 'Email' = "o365-lib-lsps@isc.upenn.edu"}
-	MUS 	= @{ 'Name' = 'University Museum'; 'Code' = '26'; 'Short' = 'MUS'; 'Email' = "o365-mus-lsps@isc.upenn.edu"}
-	NUR 	= @{ 'Name' = 'School of Nursing'; 'Code' = '06'; 'Short' = 'NUR'; 'Email' = "o365-nur-lsps@isc.upenn.edu"}
-	OACP 	= @{ 'Name' = 'Audit Compliance and Privacy'; 'Code' = '78'; 'Short' = 'OACP'; 'Email' = "o365-oacp-lsps@isc.upenn.edu"}
-	PDM 	= @{ 'Name' = 'School of Dental Medicine'; 'Code' = '51'; 'Short' = 'PDM'; 'Email' = "o365-pdm-lsps@isc.upenn.edu"}
-	PGL 	= @{ 'Name' = 'Penn Global'; 'Code' = '62'; 'Short' = 'PGL'; 'Email' = "o365-pgl-lsps@isc.upenn.edu"}
-	PSOM 	= @{ 'Name' = 'Perelman School of Medicine'; 'Code' = '40'; 'Short' = 'PSOM'; 'Email' = "o365-psom-lsps@isc.upenn.edu"}
-	PRES 	= @{ 'Name' = 'President''s Center'; 'Code' = '81'; 'Short' = 'PRES'; 'Email' = "o365-pres-lsps@isc.upenn.edu"}
-	PROV 	= @{ 'Name' = 'Provost''s Center'; 'Code' = '83'; 'Short' = 'PROV'; 'Email' = "o365-prov-lsps@isc.upenn.edu"}
-	RHS 	= @{ 'Name' = 'Residential and Hospitality Services'; 'Code' = '95'; 'Short' = 'RHS'; 'Email' = "o365-rhs-lsps@isc.upenn.edu"}
-	SAS 	= @{ 'Name' = 'School of Arts and Sciences'; 'Code' = '2'; 'Short' = 'SAS'; 'Email' = "o365-sas-lsps@isc.upenn.edu"}
-	SEAS 	= @{ 'Name' = 'School of Engineering and Applied Science'; 'Code' = '13'; 'Short' = 'SEAS'; 'Email' = "o365-seas-lsps@isc.upenn.edu"}
-	SP2 	= @{ 'Name' = 'School of Social Policy and Practice'; 'Code' = '35'; 'Short' = 'SP2'; 'Email' = "o365-sp2-lsps@isc.upenn.edu"}
-	VET 	= @{ 'Name' = 'School of Veterinary Medicine'; 'Code' = '58'; 'Short' = 'VET'; 'Email' = "o365-vet-lsps@isc.upenn.edu"}
-	VPUL 	= @{ 'Name' = 'Student Services'; 'Code' = '85'; 'Short' = 'VPUL'; 'Email' = "o365-vpul-lsps@isc.upenn.edu"}
-	WEL 	= @{ 'Name' = 'Health and Wellness'; 'Code' = '89'; 'Short' = 'WEL'; 'Email' = "o365-wel-lsps@isc.upenn.edu"}
-	WHA 	= @{ 'Name' = 'Wharton School'; 'Code' = '7'; 'Short' = 'WHA'; 'Email' = "o365-wha-lsps@isc.upenn.edu"}
-	XPN 	= @{ 'Name' = 'XPN'; 'Code' = '81'; 'Short' = 'XPN'; 'Email' = "o365-xpn-lsps@isc.upenn.edu"}
-}
-
-<### import Center from csv file
-$data = Import-Csv -Path "C:\CS\PennO365Data\CS_Center.csv"
+$data = Import-Csv -Path "C:\CS\PennO365Data\Center.csv"
 $CSCenters = @{}
 foreach ($row in $data) {
     $hash = [ordered]@{
         'Name' = $row.Name
-        'Code' = $row.Code
-        'Short' = $row.Short
+        'Center_Code' = $row.Center_Code # was code
+        'ARS_MU' = $row.ARS_MU  # was short
         'Email' = $row.Email
     }
-    $CSCenters.Add($row.Short, $hash)
+    $CSCenters.Add($row.ARS_MU, $hash)
 }
-#>
-
 <#
     .Synopsis
        This cmdlet is all in one version for mailbox report. 
     .DESCRIPTION
        By default, this cmdlet returns a report of all mailboxes in the organization, or depends on parameter,
-       the option of center's short name, and/or last # of days of new mailbox creation, and/or StartDate, EndDate of new mailbox creation.
+       the option of center's ARS_MU name, and/or last # of days of new mailbox creation, and/or StartDate, EndDate of new mailbox creation.
     .EXAMPLE
        Get-CS-MailboxAIO -lastNumberOfDays 7 //tested
     .EXAMPLE
@@ -87,122 +45,143 @@ function Get-CS-MailboxAIO{
     [CmdletBinding()]
     [Alias('Get-MailboxAIO')]
     Param(
-        [string]$Center="all",
+        [string]$Center,
         [int]$LastNumberOfDays,
         [datetime]$StartDate,
         [datetime]$EndDate
     )
-        Connect-ExchangeOnline -ShowBanner:$false
-        Connect-MgGraph -ErrorAction:SilentlyContinue
-        Select-MgProfile -Name "beta"
-   
-        $CenterCode = $CSCenters[$center].Code
+        $CenterCode = $CSCenters[$center].Center_Code
         $CenterName = $CSCenters[$center].Name
    
         $DateStamp = (Get-Date -f yyyyMMdd_HHmmss).tostring()
         $ReportPath = "C:\Temp\MailboxReport"
 
-        if($Startdate -gt $EndDate){
+        #Write-Host "Center-$Center,LastNumberOfDays-$LastNumberOfDays,StartDate-$StartDate, EndDate-$EndDate " 
+        
+        if($Startdate -gt $EndDate -and $EndDate -ne $null){
             Write-Host "The Startdate is after the EndDate." 
             break
+
+        }elseif($LastNumberOfDays -lt 0 ){
+                Write-Host "-LastNumberOfDays can't be negative." 
+                break
+        }elseif($StartDate -eq $null -and $EndDate -eq $null -and $LastNumberOfDays -lt 1 -and $Center -eq ''){
+            Write-Host "Please add Parameters"
+            break
+        }elseif($StartDate -gt $null -and -not $EndDate){
+            Write-Host "-EndDate is missing." 
+            break
+        }elseif($EndDate -gt $null -and -not $StartDate){
+            Write-Host "StartDate is missing." 
+            break
+        }elseif($Center -ne 'all' -and $Center -ne "None" -and $Center -ne '' -and $Center -notin $Script:CSCenters.Keys){
+            Write-host "Please put correct Center short name/ARS_MU name!"
+            break
         }
-        elseif(($Center -in $Script:CSCenters.Keys) -and ($LastNumberOfDays -ge 1)){
-            Write-Output "Center-$Center, code-$CenterCode, CenterName-$CenterName, LastNumberofDays-$LastNumberofDays" # testing only
+
+        Connect-ExchangeOnline -ShowBanner:$false
+        Connect-MgGraph | out-null
+        Select-MgProfile -Name "beta"
+
+    if(($Center -in $Script:CSCenters.Keys) -and ($LastNumberOfDays -ge 1)){
+        Write-Output "Center-$Center, Center_Code-$CenterCode, CenterName-$CenterName, LastNumberofDays-$LastNumberofDays" # testing only
               
-            $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
-                -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
-                where-object {($_.CustomAttribute7 -split ';')[0] -eq $CenterCode -or $_.CustomAttribute5 -eq $CenterName `
-                -and $_.WhenMailboxCreated -ge (Get-Date).AddDays(-$LastNumberOfDays)}                   
+        $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
+            -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
+            where-object {($_.CustomAttribute7 -split ';')[0] -eq $CenterCode -or $_.CustomAttribute5 -eq $CenterName `
+            -and $_.WhenMailboxCreated -ge (Get-Date).AddDays(-$LastNumberOfDays)}                   
    
-            $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
+        $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
 
-            $ReportPath = $ReportPath +"_"+ $($Center)+"_Last_"+$LastNumberOfDays+"_Days"
-            $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-            Write-Output "Please find $Center _Mailboxes report in $($ReportPath+$DateStamp).csv"         
-        }
-        elseif (($Center -in $Script:CSCenters.Keys) -and ($Startdate -lt $EndDate)){
+        $ReportPath = $ReportPath +"_"+ $($Center)+"_Last_"+$LastNumberOfDays+"_Days"
+        $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
+         Write-Output "Please find $Center _Mailboxes report in $($ReportPath+$DateStamp).csv"         
+    }
+    elseif (($Center -in $Script:CSCenters.Keys) -and ($Startdate -lt $EndDate)){
 
-            Write-Output "Center-$Center, code-$CenterCode, CenterName-$CenterName,StartDate-$Startdate, EndDate-$Enddate" # testing only
+        Write-Output "Center-$Center, Center_Code-$CenterCode, CenterName-$CenterName,StartDate-$Startdate, EndDate-$Enddate" # testing only
 
-            $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
+        $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
             -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
             Where-Object {($_.CustomAttribute7 -split ';')[0] -eq $CenterCode -or $_.CustomAttribute5 -eq $CenterName `
-                         -and ($_.WhenMailboxCreated -ge $Startdate -and $_.whenmailboxcreated -le $Enddate)}
+            -and ($_.WhenMailboxCreated -ge $Startdate -and $_.whenmailboxcreated -le $Enddate)}
         
-            $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
+        $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
 
-            $ReportPath = $ReportPath +"_"+ $($Center)+"_From$(($StartDate.ToString("yyyyMMdd")))to$(($EndDate.ToString("yyyyMMdd")))_"
-            $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-            Write-Output "Please find $Center _Mailboxes report in $($ReportPath+$DateStamp).csv"
-        }
-        elseif ($Center -eq "all"){
+        $ReportPath = $ReportPath +"_"+ $($Center)+"_From$(($StartDate.ToString("yyyyMMdd")))to$(($EndDate.ToString("yyyyMMdd")))_"
+        $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
+        Write-Output "Please find $Center _Mailboxes report in $($ReportPath+$DateStamp).csv"
+    }
+    elseif ($Center -eq "all"){
 
-            Write-Output "CenterShortName1-$Center" # testing only
+    Write-Output "CenterShortName1-$Center" # testing only
 
-            $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
-                -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated, isMailboxEnabled, ArchiveStatus,ForwardingSmtpAddress
+    $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
+        -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated, isMailboxEnabled, ArchiveStatus,ForwardingSmtpAddress
                 
-            $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
+    $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
 
-            $ReportPath = $ReportPath +"_"+ $($Center)+"_"
-            $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-            Write-Output "Please find $Center _Mailboxes report in $($ReportPath+$DateStamp).csv"
-            }
-        elseif ($Center -in $Script:CSCenters.Keys){
+    $ReportPath = $ReportPath +"_"+ $($Center)+"_"
+    $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
+    Write-Output "Please find $Center _Mailboxes report in $($ReportPath+$DateStamp).csv"
+    }
+    elseif ($Center -in $Script:CSCenters.Keys){
         
-            Write-Output "CenterShortName-$Center, code-$CenterCode, CenterName-$CenterName" # testing only
+        Write-Output "CenterShortName-$Center, Center_Code-$CenterCode, CenterName-$CenterName" # testing only
               
-            $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
-                -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
-                Where-Object {(($_.CustomAttribute7 -split ';')[0] -eq $CenterCode) -or ($_.CustomAttribute5 -eq $CenterName)} 
+        $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
+            -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
+            Where-Object {(($_.CustomAttribute7 -split ';')[0] -eq $CenterCode) -or ($_.CustomAttribute5 -eq $CenterName)} 
     
-            $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
+        $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
 
-            $ReportPath = $ReportPath +"_"+ $($Center)+"_"
-            $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-            Write-Output "Please find $Center _Mailboxes report in $($ReportPath+$DateStamp).csv"
-        }
-        elseif ($Center -eq "none"){
+        $ReportPath = $ReportPath +"_"+ $($Center)+"_"
+        $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
+        Write-Output "Please find $Center _Mailboxes report in $($ReportPath+$DateStamp).csv"
+    }
+    elseif ($Center -eq "none"){
             
-            Write-Output "CenterShortName-$Center" # testing only
+        Write-Output "CenterShortName-$Center" # testing only
                 
-            $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
-                -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
-                Where-Object {($_.Customattribute7 -eq "") -and ($_.CustomAttribute5 -eq "")}
+        $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
+            -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
+            Where-Object {($_.Customattribute7 -eq "") -and ($_.CustomAttribute5 -eq "")}
                 
-            $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
+        $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
 
-            $ReportPath = $ReportPath +"_"+ $($Center)+"_"                                      
-            $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-            Write-Output "Please find $center _Mailboxes report in $($ReportPath+$DateStamp).csv"
-        }
-        elseif($LastNumberOfDays -ge 1){
-            Write-Output "LastNumberOfDays-$LastNumberOfDays" # testing only
+        $ReportPath = $ReportPath +"_"+ $($Center)+"_"                                      
+        $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
+         Write-Output "Please find $center _Mailboxes report in $($ReportPath+$DateStamp).csv"
+    }
+    elseif($LastNumberOfDays -ge 1){
+    Write-Output "LastNumberOfDays-$LastNumberOfDays" # testing only
 
-            $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
-                -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
-                Where-Object {$_.WhenMailboxCreated -ge (Get-Date).AddDays(-$LastNumberOfDays)}
+    $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
+        -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
+        Where-Object {$_.WhenMailboxCreated -ge (Get-Date).AddDays(-$LastNumberOfDays)}
             
-            $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
+    $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
             
-            $ReportPath = $ReportPath + "_Last"+$LastNumberOfDays + "Days_"
-            $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
+    $ReportPath = $ReportPath + "_Last"+$LastNumberOfDays + "Days_"
+    $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
             
-        }
-        elseif($Startdate -lt $EndDate){  
-            Write-Output "Startdate-$Startdate, EndDate-$EndDate" # testing only
+    }
+    elseif($Startdate -lt $EndDate){  
+        Write-Output "Startdate-$Startdate, EndDate-$EndDate" # testing only
 
-            $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
-                -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
-                Where-Object {$_.WhenMailboxCreated -ge $Startdate -and $_.whenmailboxcreated -le $Enddate} 
+        $Mailboxes = Get-EXOMailbox -ResultSize unlimited `
+            -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
+            Where-Object {$_.WhenMailboxCreated -ge $Startdate -and $_.whenmailboxcreated -le $Enddate} 
             
-            $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
-            $ReportPath = $ReportPath + "_From$(($StartDate.ToString("yyyyMMdd")))to$(($EndDate.ToString("yyyyMMdd")))_"
-            $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-        }          
+        $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
+        $ReportPath = $ReportPath + "_From$(($StartDate.ToString("yyyyMMdd")))to$(($EndDate.ToString("yyyyMMdd")))_"
+        $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
+    } 
+    
 }
-
-#    internal function, hash table to create report.
+<#
+    internal function, hash table to create report.
+#>
 function Get-CS-AllMailboxHash{
     [CmdletBinding()]
     [Alias('Get-AllMailboxReport')]
@@ -212,7 +191,8 @@ function Get-CS-AllMailboxHash{
         $Mailboxes
     )
         $total = $Mailboxes.count
-        # $Total = ($Mailboxes | Measure-Object).Count
+        
+       # $Total = ($Mailboxes | Measure-Object).Count
         $i = 0
         $MailboxData = @()
         $Mailboxes | ForEach-Object {
