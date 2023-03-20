@@ -76,7 +76,7 @@ function Get-CS-MailboxAIO{
             Write-Error "The Startdate has to be early than the EndDate." -ErrorAction Stop
         }
 
-        #Write-Output "Connect to real world!!" 
+        #Write-Output "Connect to real world!" 
         #break
         Connect-ExchangeOnline -ShowBanner:$false 
         Connect-MgGraph | out-null 
