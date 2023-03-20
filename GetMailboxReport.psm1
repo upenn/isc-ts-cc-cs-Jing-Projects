@@ -6,8 +6,9 @@ Get-CS-MailboxAIO (alias: Get-MailboxAIO) with paramter:
  * report by all centers: -center all
  * report without any center information: -center none.
  * report by date: -LastNumberOfDays, -StartDate/-EndDate
- * 
+ * report will be on current user's Desktop
  * this cmdlet needs $CSCcenters, Get-CS-MailboxHash
+ * 
 #>
 
 $data = Import-Csv -Path "C:\CS\PennO365Data\Center.csv"
@@ -76,7 +77,7 @@ function Get-CS-MailboxAIO{
             Write-Error "The Startdate has to be early than the EndDate." -ErrorAction Stop
         }
 
-        #Write-Output "Connect to real world!!" 
+        #Write-Output "Connect to real world!" 
         #break
         Connect-ExchangeOnline -ShowBanner:$false 
         Connect-MgGraph | out-null 
