@@ -6,8 +6,8 @@ Get-CS-MailboxAIO (alias: Get-MailboxAIO) with paramter:
  * report by all centers: -center all
  * report without any center information: -center none.
  * report by date: -LastNumberOfDays, -StartDate/-EndDate
- * 
  * this cmdlet needs $CSCcenters, Get-CS-MailboxHash
+ * report will be on current user's Desktop 
 #>
 
 $data = Import-Csv -Path "C:\CS\PennO365Data\Center.csv"
