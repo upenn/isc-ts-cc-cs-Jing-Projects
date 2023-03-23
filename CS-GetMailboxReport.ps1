@@ -189,7 +189,7 @@ function Get-CS-AllMailboxHash{
 
           $MailboxHash = [ordered]@{
                 PennID                = (Get-MgUser -UserId $_.UserPrincipalName -ErrorAction:SilentlyContinue).EmployeeId
-                Name                  = $_.Name
+                Name                  = ($_.UserPrincipalName -split '@')[0]
                 DisplayName           = $_.DisplayName
                 UserPrincipalName     = $_.UserPrincipalName
                 ManagingCenter        = ($_.CustomAttribute7 -split ';')[0]
