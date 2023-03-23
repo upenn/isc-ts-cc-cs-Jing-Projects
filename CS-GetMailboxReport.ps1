@@ -171,7 +171,7 @@ function Get-CS-MailboxAIO{
     internal function, hash table to create report.
 #>
 function Get-CS-AllMailboxHash{
-    [Alias('Get-AllMailboxReport')]
+
     Param(
         [Parameter(Mandatory=$false)]
         $Mailboxes
