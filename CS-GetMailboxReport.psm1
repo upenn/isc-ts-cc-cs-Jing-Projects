@@ -7,7 +7,7 @@ Get-CS-MailboxAIO (alias: Get-MailboxAIO) with paramter:
  * report without any center information: -center none.
  * report by date: -LastNumberOfDays, -StartDate/-EndDate
  * this cmdlet needs $CSCcenters, Get-CS-MailboxHash
- * report will be on current user's Desktop 
+ * report will be on current user's Desktop
 #>
 
 $data = Import-Csv -Path "C:\CS\PennO365Data\Center.csv"
@@ -171,7 +171,7 @@ function Get-CS-MailboxAIO{
     internal function, hash table to create report.
 #>
 function Get-CS-AllMailboxHash{
-    [Alias('Get-AllMailboxReport')]
+
     Param(
         [Parameter(Mandatory=$false)]
         $Mailboxes
@@ -189,7 +189,7 @@ function Get-CS-AllMailboxHash{
 
           $MailboxHash = [ordered]@{
                 PennID                = (Get-MgUser -UserId $_.UserPrincipalName -ErrorAction:SilentlyContinue).EmployeeId
-                Name                  = $_.Name
+                Name                  = ($_.UserPrincipalName -split '@')[0]
                 DisplayName           = $_.DisplayName
                 UserPrincipalName     = $_.UserPrincipalName
                 ManagingCenter        = ($_.CustomAttribute7 -split ';')[0]
