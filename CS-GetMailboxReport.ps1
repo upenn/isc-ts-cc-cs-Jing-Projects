@@ -46,7 +46,7 @@ foreach ($row in $data) {
     .INPUTS
        parameters
     .OUTPUTS
-       CSV file in C:\Temp folder
+       CSV file will be on current user's Desktop
 #>
 function Get-CS-MailboxAIO{
     Param(
