@@ -21,3 +21,7 @@
 
 ## [1.3.1] - 2023-03-23
 - changed Name without objectID
+
+## [1.3.2] -2023-04-03
+- added function get-output
+- added "processing" message
