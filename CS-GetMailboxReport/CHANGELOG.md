@@ -25,3 +25,4 @@
 ## [1.3.2] -2023-04-03
 - added function get-output
 - added "processing" message
+- use Connect-MgGraph -Scopes "Directory.Read.All" to get MgGraph value for PennID and License information
