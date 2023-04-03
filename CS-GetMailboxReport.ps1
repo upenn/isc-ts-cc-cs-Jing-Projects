@@ -79,8 +79,9 @@ function Get-CS-MailboxAIO{
         #Write-Output "Connect to real world!" 
         #break
         Connect-ExchangeOnline -ShowBanner:$false 
-        Connect-MgGraph | out-null 
+        Connect-MgGraph -Scopes "Directory.Read.All"  -ErrorAction SilentlyContinue -Errorvariable ConnectionError |Out-Null
         Select-MgProfile -Name "beta" 
+        Write-Progress "Getting mailboxes. Please wait..." 
 
     if($center -eq "all" -and $LastNumberOfDays -ge 1){
 
@@ -88,11 +89,8 @@ function Get-CS-MailboxAIO{
             -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated,isMailboxEnabled,ArchiveStatus,ForwardingSmtpAddress |
             Where-Object {$_.WhenMailboxCreated -ge (Get-Date).AddDays(-$LastNumberOfDays)}
                     
-        $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
-                    
-        $ReportPath = $ReportPath + $($Center) +"_"
-        $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-        Write-Output "Please find $($Center)_Mailboxes report in $($ReportPath+$DateStamp).csv"   
+        $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes                    
+        Get-Output
 
     }elseif($center -eq "all" -and $Startdate -lt $EndDate){  
         
@@ -101,9 +99,7 @@ function Get-CS-MailboxAIO{
             Where-Object {$_.WhenMailboxCreated -ge $Startdate -and $_.whenmailboxcreated -le $Enddate} 
                    
         $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
-        $ReportPath = $ReportPath + $($Center)+"_"
-        $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-        Write-Output "Please find $($Center)_Mailboxes report in $($ReportPath+$DateStamp).csv"   
+        Get-Output
 
     }elseif(($Center -in $Script:CSCenters.Keys) -and ($LastNumberOfDays -ge 1)){
              
@@ -114,9 +110,7 @@ function Get-CS-MailboxAIO{
    
         $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
 
-        $ReportPath = $ReportPath + $($Center)+"_"
-        $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-         Write-Output "Please find $($Center)_Mailboxes report in $($ReportPath+$DateStamp).csv"         
+        Get-Output  
     }
     elseif (($Center -in $Script:CSCenters.Keys) -and ($Startdate -lt $EndDate)){
 
@@ -126,10 +120,7 @@ function Get-CS-MailboxAIO{
             -and ($_.WhenMailboxCreated -ge $Startdate -and $_.whenmailboxcreated -le $Enddate)}
         
         $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
-
-        $ReportPath = $ReportPath + $($Center)+"_"
-        $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-        Write-Output "Please find $Center _Mailboxes report in $($ReportPath+$DateStamp).csv"
+        Get-Output
     }
     elseif ($Center -eq "all"){
 
@@ -137,10 +128,7 @@ function Get-CS-MailboxAIO{
             -Properties CustomAttribute5,Customattribute7,CustomAttribute14,WhenMailboxCreated, isMailboxEnabled, ArchiveStatus,ForwardingSmtpAddress
                 
         $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
-
-        $ReportPath = $ReportPath + $($Center)+"_"
-        $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-        Write-Output "Please find $Center _Mailboxes report in $($ReportPath+$DateStamp).csv"
+        Get-Output
     }
     elseif ($Center -in $Script:CSCenters.Keys){    
     
@@ -149,10 +137,7 @@ function Get-CS-MailboxAIO{
             Where-Object {(($_.CustomAttribute7 -split ';')[0] -eq $CenterCode) -or ($_.CustomAttribute5 -eq $CenterName)} 
     
         $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
-
-        $ReportPath = $ReportPath + $($Center)+"_"
-        $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-        Write-Output "Please find $Center _Mailboxes report in $($ReportPath+$DateStamp).csv"
+        Get-Output
     }
     elseif ($Center -eq "none"){        
            
@@ -161,10 +146,7 @@ function Get-CS-MailboxAIO{
             Where-Object {($_.Customattribute7 -eq "") -and ($_.CustomAttribute5 -eq "")}
                 
         $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
-
-        $ReportPath = $ReportPath + $($Center) +"_"                               
-        $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation
-         Write-Output "Please find $center _Mailboxes report in $($ReportPath+$DateStamp).csv"
+        Get-Output
     }    
 }
 <#
@@ -185,9 +167,12 @@ function Get-CS-AllMailboxHash{
             $i++
             $percent = ($i / $total * 100)
             Write-Progress -Activity "Processing mailboxes" -PercentComplete $percent -Status "$i of $total processed"
-
-          $MailboxHash = [ordered]@{
-                PennID                = (Get-MgUser -UserId $_.UserPrincipalName -ErrorAction:SilentlyContinue).EmployeeId
+            # Write-Progress -Activity "`n     Exported user count:$MailboxCount "`n"Currently Processing:$UPN"
+            # $MailboxCount = $Mailboxes.count
+  
+            $MailboxHash = [ordered]@{
+                #PennID                = (Get-MgUser -UserId $_.UserPrincipalName -ErrorAction:SilentlyContinue).EmployeeId
+                PennID                = ''
                 Name                  = ($_.UserPrincipalName -split '@')[0]
                 DisplayName           = $_.DisplayName
                 UserPrincipalName     = $_.UserPrincipalName
@@ -203,12 +188,24 @@ function Get-CS-AllMailboxHash{
                 MailboxEnabled        = $_.isMailboxEnabled
                 WhenMailboxCreated    = $_.WhenMailboxCreated
                 ArchiveStatus         = $_.ArchiveStatus
-                License               = (Get-MgUserLicenseDetail -UserId $_.UserPrincipalName -ErrorAction:SilentlyContinue).SkuPartNumber -join ";"
-            }
-
+                #License               = (Get-MgUserLicenseDetail -UserId $_.UserPrincipalName -ErrorAction:SilentlyContinue).SkuPartNumber -join ";"
+                License               = ''
+           }
+           try {
+            $MgUser = Get-MgUser -UserId $_.UserPrincipalName -ErrorAction:Stop
+            $MailboxHash.PennID = $MgUser.EmployeeId
+            $MailboxHash.License = (Get-MgUserLicenseDetail -UserId $_.UserPrincipalName -ErrorAction:SilentlyContinue).SkuPartNumber -join ";"
+        }
+        catch {
+            Write-Warning "Failed to retrieve user's PennID and License information" -ErrorAction Stop
+        }
             $MailboxRow = New-Object psobject -Property $MailboxHash
-
             $MailboxData += $MailboxRow
-            }
+        }
        return $MailboxData | Sort-Object WhenMailboxCreated -Descending
+}
+function Get-Output {
+    $ReportPath = $ReportPath + $($Center)+"_"
+    $MailboxData | Export-Csv "$($ReportPath+$DateStamp).csv" -NoTypeInformation -ErrorAction:SilentlyContinue
+    Write-Output "Please find $($Center)_Mailboxes report in $($ReportPath+$DateStamp).csv"   
 }
