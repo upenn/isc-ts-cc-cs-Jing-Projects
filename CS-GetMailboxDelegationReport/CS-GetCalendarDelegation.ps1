@@ -44,7 +44,6 @@ Function Get-CS-CalendarDelegationC{
                 MailboxType         = $mailbox.RecipientTypeDetails
                 AccessRights        = "Calendar:" + $permission.AccessRights
                 Trustee             = $permission.User.DisplayName
-
                 trusteeEmailAddress = (Get-EXORecipient -Identity $permission.User.DisplayName).PrimarySmtpAddress
                 PCOMCenter           = ($mailbox.CustomAttribute7 -split ';')[0]
             }
