@@ -145,7 +145,8 @@ function Get-CS-MailboxAIO{
         $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
         Get-Output
     }    
-
+    Disconnect-ExchangeOnline -Confirm:$false *> $null
+    #Disconnect-MgGraph
 
 }
 <#

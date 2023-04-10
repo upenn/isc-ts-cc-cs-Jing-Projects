@@ -25,3 +25,6 @@
 ## [1.3.2] -2023-04-03
 - added function get-output
 - added "processing" message
+
+## [1.3.3] -2023-04-10
+- added disconnect-exchangeonline to avoid duplicate records on previous scripting

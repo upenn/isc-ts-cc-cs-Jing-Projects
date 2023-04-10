@@ -1,5 +1,5 @@
 ﻿<#
-Get-CS-MailboxAIO (alias: Get-MailboxAIO) with paramter: 
+Get-CS-MailboxAIO with paramter: 
  * Parameter -Center is mandantory and positional.
  * 
  * report by center ARS_MU number: -center ISC
@@ -148,6 +148,8 @@ function Get-CS-MailboxAIO{
         $MailboxData = Get-CS-AllMailboxHash -Mailboxes $Mailboxes
         Get-Output
     }    
+    Disconnect-ExchangeOnline -Confirm:$false *> $null
+    #Disconnect-MgGraph
 }
 <#
     internal function, hash table to create report.
