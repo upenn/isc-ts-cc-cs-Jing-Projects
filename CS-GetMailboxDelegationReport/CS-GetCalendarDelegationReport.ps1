@@ -2,7 +2,7 @@
 Get-CS-CalendarDelegationReport with paramter: 
  * This cmdlet is getting  Calendar Delegation Report by Center or for All center.
  * report by center ARS_MU number: -center ISC
- * report by all centers: -center allailboxHash
+ * report by all centers: -center all
  * report will be on current user's Desktop
 #>
 

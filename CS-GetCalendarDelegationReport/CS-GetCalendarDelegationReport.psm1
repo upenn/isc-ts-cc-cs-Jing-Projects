@@ -1,3 +1,12 @@
+<#
+Get-CS-CalendarDelegationReport with paramter: 
+ * This cmdlet is getting  Calendar Delegation Report by Center or for All center.
+ * report by center ARS_MU number: -center ISC
+ * report by all centers: -center allailboxHash
+ * report will be on current user's Desktop
+#>
+
+# import center information
 $data = Import-Csv -Path "C:\CS\PennO365Data\Center.csv"
 $CSCenters = @{}
 foreach ($row in $data) {
@@ -10,6 +19,23 @@ foreach ($row in $data) {
     $CSCenters.Add($row.ARS_MU, $hash)
 }
 
+<#
+    .Synopsis
+       This cmdlet is getting  Calendar Delegation Report by Center or for All center.
+    .DESCRIPTION
+       By default, this cmdlet returns a report of all mailboxe calendars in the organization.
+       -center is optional, by default is for All.
+    .EXAMPLE
+        Get-CS-CalendarDelegationReport All
+    .EXAMPLE
+       Get-CS-CalendarDelegationReport
+    .EXAMPLE
+       Get-CS-CalendarDelegationReport -Center ISC
+    .INPUTS
+       parameters
+    .OUTPUTS
+       CSV file in current user's desktop.
+#>
 Function Get-CS-CalendarDelegationReport{
     param(
     [Parameter(Mandatory=$false)]
@@ -41,13 +67,7 @@ Function Get-CS-CalendarDelegationReport{
 
         Get-CS-CalendarDelegationPermissionHash
 
-<#
-    Get-EXOMailbox -ResultSize Unlimited `
-      -Properties CustomAttribute5, CustomAttribute7 |
-      ForEach-Object{
-        $MBUserCount++
-        Get-MBPermission 
-#>
+
     }elseif ($Center -eq "none"){
 
         $mailboxes = Get-EXOMailbox -ResultSize Unlimited -Properties CustomAttribute5, CustomAttribute7, UserPrincipalName, PrimarySmtpAddress |
@@ -57,16 +77,7 @@ Function Get-CS-CalendarDelegationReport{
 
         Get-CS-CalendarDelegationPermissionHash
 
-<#
-
-    Get-EXOMailbox -ResultSize Unlimited `
-      -Properties CustomAttribute5, CustomAttribute7 |
-      Where-Object {($_.Customattribute7 -eq "") -and ($_.CustomAttribute5 -eq "")} |
-      ForEach-Object{
-        $MBUserCount++
-        Get-MBPermission
-        #>
-      }elseif($Center -in $Script:CSCenters.Keys){
+     }elseif($Center -in $Script:CSCenters.Keys){
     $center = $CSCenters[$center].ARS_MU
 
     $mailboxes = Get-EXOMailbox -ResultSize Unlimited -Properties CustomAttribute5, CustomAttribute7, UserPrincipalName, PrimarySmtpAddress |
@@ -88,6 +99,7 @@ function Get-TrusteeEmail($TrusteeUserPrincipalName) {
     }
 }
 
+#internal function, hash table to create report.
 function Get-CS-CalendarDelegationPermissionHash{
     Param{
         $mailboxes
@@ -131,7 +143,6 @@ function Get-CS-CalendarDelegationPermissionHash{
                     ManagingCenterName   = $mailbox.CustomAttribute5                
                     MailboxType          = $mailbox.RecipientTypeDetails
                     AccessRights         = $AccessRights 
-                  #  Trustee              = $Trustee
                     TrusteeEmailAddress  = $TrusteeEmailAddresses -join ";"
                 }
     
