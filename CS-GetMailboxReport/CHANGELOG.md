@@ -28,3 +28,6 @@
 
 ## [1.3.3] -2023-04-10
 - added disconnect-exchangeonline to avoid duplicate records on previous scripting
+
+## [2.0.1] -2023-05-02
+- use filter to replace where-object
